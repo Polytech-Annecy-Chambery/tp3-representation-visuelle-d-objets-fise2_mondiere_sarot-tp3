@@ -53,11 +53,24 @@ class Section:
     # Defines the vertices and faces 
     def generate(self):
         self.vertices = [ 
-                # Définir ici les sommets
-                ]
+          [0, 0, 0 ], #on initialise l origine en bas à gauche
+          [0, 0, self.parameters['height']], 
+          [self.parameters['width'], 0, self.parameters['height']],
+          [self.parameters['width'], 0, 0],
+          [0,self.parameters['thickness'],0],
+          [0,self.parameters['thickness'],self.parameters['height']],
+          [self.parameters['width'],self.parameters['thickness'],0],
+          [self.parameters['width'],self.parameters['thickness'],self.parameters['height']]
+          ]
         self.faces = [
-                # définir ici les faces
-                ]   
+          [0, 3, 2, 1],
+          [3,6,7,2],
+          [1,2,7,5],
+          [4,6,7,5],
+          [0,4,5,1],
+          [0,3,6,4]
+          ]
+
 
     # Checks if the opening can be created for the object x
     def canCreateOpening(self, x):
@@ -71,11 +84,29 @@ class Section:
         
     # Draws the edges
     def drawEdges(self):
-        # A compléter en remplaçant pass par votre code
-        pass           
+      gl.glPushMatrix()
+      gl.glTranslatef(self.parameters['position'][0],self.parameters['position'][1], self.parameters['position'][2])
+      gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE) # on trace les arrêtes : GL_LINE
+      gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+      gl.glColor3fv([0, 0, 0]) # Couleur noir
+      for f in self.faces:
+        for k in f:
+          gl.glVertex3fv(self.vertices[k])
+      gl.glEnd()
+      gl.glPopMatrix()
                     
     # Draws the faces
     def draw(self):
-        # A compléter en remplaçant pass par votre code
-        pass
-  
+        if self.parameters['edges']:
+          self.drawEdges()
+        
+        gl.glPushMatrix()
+        gl.glTranslatef(self.parameters['position'][0],self.parameters['position'][1], self.parameters['position'][2])
+        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL) # on trace les faces : GL_FILL
+        gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+        gl.glColor3fv([0.5, 0.5, 0.5]) # Couleur gris moyen
+        for f in self.faces:
+          for k in f:
+            gl.glVertex3fv(self.vertices[k])
+        gl.glEnd()
+        gl.glPopMatrix()
